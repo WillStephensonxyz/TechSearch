@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver 
+from selenium.webdriver.firefox.options import Options 
 import webbrowser 
 import requests 
 import sys 
@@ -8,7 +9,9 @@ import json
 
 def getUserAgent():
     user_agent = {"User-Agent": ""}
-    driver = webdriver.Firefox()
+    options = Options() 
+    options.add_argument("-headlessw")  
+    driver = webdriver.Firefox(options=options)
     user_agent_key = driver.execute_script("return navigator.userAgent;")
     user_agent["User-Agent"] = user_agent_key
     driver.quit()
