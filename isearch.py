@@ -10,14 +10,14 @@ import json
 def getUserAgent():
     user_agent = {"User-Agent": ""}
     options = Options() 
-    options.add_argument("-headlessw")  
+    options.add_argument("-headless")  
     driver = webdriver.Firefox(options=options)
     user_agent_key = driver.execute_script("return navigator.userAgent;")
     user_agent["User-Agent"] = user_agent_key
     driver.quit()
     return user_agent
 
-def cliUrls(query): 
+def getUrls(query): 
     header = user_agent
     url = f"https://google.com/search?q='{query}'"
     response = requests.get(url, headers=user_agent) 
@@ -25,7 +25,10 @@ def cliUrls(query):
 
     title_objects = soup.find_all('h3') 
     links = soup.find_all('a')
+    
+    return title_objects, links 
 
+def cliUrls(title, link): 
     results = [] 
     
     for h3 in title_objects: 
@@ -38,8 +41,8 @@ def cliUrls(query):
     for index, (title, link) in enumerate(results, start=1):
         print(f"{title} \n {link}") 
 
-
-# def webBrowser(): 
+ def openBrowser(link): 
+    pass 
 
 if __name__ == "__main__": 
     if len(sys.argv) < 2: 
@@ -48,4 +51,5 @@ if __name__ == "__main__":
         query = ' '.join(sys.argv[1:]) 
         
         user_agent = getUserAgent()
-        cliUrls(query) 
+        title_objects, links = getUrls(query) 
+        cliUrls(title_objects, links)
