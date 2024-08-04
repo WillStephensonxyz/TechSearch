@@ -1,5 +1,1 @@
-{
-	"Accepted_Sites": ["Stack Overflow", "Github", "Quora", "Stackexchange", "Reddit"] 
-	"Open_Tabs": 5, 
-	"CLI_return": 10
-} 
+{"Accepted_Sites": ["stackoverflow", "github", "quora", "stackexchange", "reddit", "pentestmonkey", "hacktricks"], "Open_Tabs": "5"}

@@ -4,7 +4,6 @@ from selenium.webdriver.firefox.options import Options
 import webbrowser 
 import requests 
 import sys 
-# import urllib 
 import json 
 
 def getUserAgent():
@@ -25,11 +24,20 @@ def getUrls(query, user_agent):
 
     return title_objects, links 
 
+def openConfig(): 
+    with open("searchconf.json", "r") as f: 
+        config_vars = json.load(f) 
+        return config_vars
+
 def main(): 
+
+    config_vars = openConfig()
+    config = int(config_vars["Open_Tabs"]) 
     user_agent = getUserAgent() 
     title_objects, links = getUrls(query, user_agent) 
 
     results = [] 
+
     for h3 in title_objects: 
         parent = h3.parent 
         if parent.name == 'a': 
@@ -37,11 +45,10 @@ def main():
             title = h3.getText() 
             results.append((title, link)) 
 
-    for index, (title, link) in enumerate(results, start=1):
+    for index, (title, link) in enumerate(results[:config], start=1):
         print(f"{title} \n {link}") 
         if open_browser == True: 
             webbrowser.open(link) 
-
 
 if __name__ == "__main__": 
     
@@ -52,12 +59,22 @@ if __name__ == "__main__":
     if sys.argv[1].lower() == "-o":
         if len(sys.argv) < 3: 
             print("Usage: python3 isearch.py -o <query>") 
+            sys.exit(1)
         open_browser = True 
         query = ' '.join(sys.argv[2:])
         main()
 
+    if sys.argv[1].lower() == "-e": 
+        if len(sys.argv) < 3: 
+            print("Usage: python3 isearch.py -e <integer>")
+            sys.exit(1) 
+        config_vars = openConfig()
+        config_vars["Open_Tabs"] = sys.argv[2]
+        with open("searchconf.json", "w") as f: 
+            json.dump(config_vars, f) 
+        print(f"Result variable set to {sys.argv[2]}") 
+
     else: 
-        query = ' '.join(sys.argv[1:]) 
-        print(query) 
         open_browser = False 
+        query = ' '.join(sys.argv[1:]) 
         main()
