@@ -25,9 +25,11 @@ def getUrls(query, user_agent):
 
     return title_objects, links 
 
-def main(title, link): 
+def main(): 
+    user_agent = getUserAgent() 
+    title_objects, links = getUrls(query, user_agent) 
+
     results = [] 
-    
     for h3 in title_objects: 
         parent = h3.parent 
         if parent.name == 'a': 
@@ -37,14 +39,25 @@ def main(title, link):
 
     for index, (title, link) in enumerate(results, start=1):
         print(f"{title} \n {link}") 
+        if open_browser == True: 
+            webbrowser.open(link) 
 
 
 if __name__ == "__main__": 
+    
     if len(sys.argv) < 2: 
-        print("Usage: python3 isearch.py <query>") 
+        print("Usage: python3 isearch.py [-o] <query>") 
+        sys.exit(1) 
+
+    if sys.argv[1].lower() == "-o":
+        if len(sys.argv) < 3: 
+            print("Usage: python3 isearch.py -o <query>") 
+        open_browser = True 
+        query = ' '.join(sys.argv[2:])
+        main()
+
     else: 
         query = ' '.join(sys.argv[1:]) 
-        
-        user_agent = getUserAgent()
-        title_objects, links = getUrls(query, user_agent) 
-        main(title_objects, links)
+        print(query) 
+        open_browser = False 
+        main()
