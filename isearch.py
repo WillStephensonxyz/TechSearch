@@ -8,27 +8,24 @@ import sys
 import json 
 
 def getUserAgent():
-    user_agent = {"User-Agent": ""}
     options = Options() 
     options.add_argument("-headless")  
     driver = webdriver.Firefox(options=options)
-    user_agent_key = driver.execute_script("return navigator.userAgent;")
-    user_agent["User-Agent"] = user_agent_key
+    user_agent = driver.execute_script("return navigator.userAgent;")
     driver.quit()
-    return user_agent
+    return {"User-Agent": user_agent}   
 
-def getUrls(query): 
-    header = user_agent
+def getUrls(query, user_agent): 
     url = f"https://google.com/search?q='{query}'"
     response = requests.get(url, headers=user_agent) 
     soup = BeautifulSoup(response.text, "html.parser") 
 
     title_objects = soup.find_all('h3') 
-    links = soup.find_all('a')
-    
+    links = [a['href'] for a in soup.find_all('a', href=True)]
+
     return title_objects, links 
 
-def cliUrls(title, link): 
+def main(title, link): 
     results = [] 
     
     for h3 in title_objects: 
@@ -41,8 +38,6 @@ def cliUrls(title, link):
     for index, (title, link) in enumerate(results, start=1):
         print(f"{title} \n {link}") 
 
- def openBrowser(link): 
-    pass 
 
 if __name__ == "__main__": 
     if len(sys.argv) < 2: 
@@ -51,5 +46,5 @@ if __name__ == "__main__":
         query = ' '.join(sys.argv[1:]) 
         
         user_agent = getUserAgent()
-        title_objects, links = getUrls(query) 
-        cliUrls(title_objects, links)
+        title_objects, links = getUrls(query, user_agent) 
+        main(title_objects, links)
