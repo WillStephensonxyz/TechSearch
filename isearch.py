@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver 
 from selenium.webdriver.firefox.options import Options 
+from pathlib import Path
 import webbrowser 
 import requests 
 import sys 
@@ -25,12 +26,11 @@ def getUrls(query, user_agent):
     return title_objects, links 
 
 def openConfig(): 
-    with open("searchconf.json", "r") as f: 
+    with open(f"{config_path}", "r") as f: 
         config_vars = json.load(f) 
         return config_vars
 
 def main(): 
-
     config_vars = openConfig()
     config = int(config_vars["Open_Tabs"]) 
     user_agent = getUserAgent() 
@@ -51,6 +51,9 @@ def main():
             webbrowser.open(link) 
 
 if __name__ == "__main__": 
+
+    script_path = Path(__file__).resolve() 
+    config_path = script_path.with_name("searchconf.json")
     
     if len(sys.argv) < 2: 
         print("Usage: python3 isearch.py [-o] <query>") 
@@ -70,7 +73,7 @@ if __name__ == "__main__":
             sys.exit(1) 
         config_vars = openConfig()
         config_vars["Open_Tabs"] = sys.argv[2]
-        with open("searchconf.json", "w") as f: 
+        with open(f"{config_path}", "w") as f: 
             json.dump(config_vars, f) 
         print(f"Result variable set to {sys.argv[2]}") 
 
