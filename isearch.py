@@ -7,6 +7,11 @@ import requests
 import sys 
 import json 
 
+def openConfig(): 
+    with open(f"{config_path}", "r") as f: 
+        config_vars = json.load(f) 
+        return config_vars
+
 def getUserAgent():
     options = Options() 
     options.add_argument("-headless")  
@@ -25,15 +30,10 @@ def getUrls(query, user_agent):
 
     return title_objects, links 
 
-def openConfig(): 
-    with open(f"{config_path}", "r") as f: 
-        config_vars = json.load(f) 
-        return config_vars
-
 def main(): 
     config_vars = openConfig()
     config = int(config_vars["Open_Tabs"]) 
-    user_agent = getUserAgent() 
+    user_agent = config_vars["User_agent"]  
     title_objects, links = getUrls(query, user_agent) 
 
     results = [] 
@@ -76,6 +76,15 @@ if __name__ == "__main__":
         with open(f"{config_path}", "w") as f: 
             json.dump(config_vars, f) 
         print(f"Result variable set to {sys.argv[2]}") 
+
+    if sys.argv[1].lower() == "-u": 
+        if len(sys.argv) < 3: 
+            print("Usage: python3 isearch.py -u")
+        config_vars = openConfig()
+        config_vars["User_Agent"] = getUserAgent() 
+        with open (f"{config_path}", "w") as f: 
+            json.dump(config_vars, f) 
+        print(f"User agent set to {config_vars}") 
 
     else: 
         open_browser = False 
