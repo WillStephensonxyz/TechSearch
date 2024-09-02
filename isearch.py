@@ -33,7 +33,7 @@ def getUrls(query, user_agent):
 def main(): 
     config_vars = openConfig()
     config = int(config_vars["Open_Tabs"]) 
-    user_agent = config_vars["User_agent"]  
+    user_agent = config_vars["User_Agent"]  
     title_objects, links = getUrls(query, user_agent) 
 
     results = [] 
